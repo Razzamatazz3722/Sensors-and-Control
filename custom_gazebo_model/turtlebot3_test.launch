@@ -1,0 +1,39 @@
+<launch>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find turtlebot3_gazebo)/worlds/turtlebot3_empty_world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>  
+
+  <group ns = "follower">
+	  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+	  <arg name="x_pos" default="0.0"/>
+	  <arg name="y_pos" default="0.0"/>
+	  <arg name="z_pos" default="0.0"/>
+
+	  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro" />
+
+	  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot3_$(arg model) -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+  </group>
+
+<group ns = "leader">
+	<arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+	  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model).urdf.xacro" />
+
+	<include file="$(find turtlebot3_gazebo)/launch/spawn_sdf.launch">
+	<arg name="robot_name" value="leader" />
+	<arg name="x" value="1.0" />
+	<arg name="y" value="1.0" />
+	<arg name="z" value="0.0" />
+	<arg name="roll" value="0"/>
+	<arg name="pitch" value="0"/>
+	<arg name="yaw" value="0.0" />
+	<arg name="sdf_robot_file" value="$(find turtlebot3_gazebo)/models/leader/model.sdf" />
+	</include> 
+  </group>
+
+</launch>
