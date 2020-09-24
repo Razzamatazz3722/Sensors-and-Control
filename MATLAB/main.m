@@ -2,28 +2,33 @@ rosshutdown
 rosinit
 
 while(1)
-    sub = rossubscriber('/follower/camera/rgb/image_raw');
+    %setup ros subscriber
+    sub = rossubscriber('/tb3_0/camera/rgb/image_raw');
     pause(1);
 
     msg2 = receive(sub,10);
+    
     %convert from ros image type to matlab image type
     img = readImage(msg2);
-    roi = [470,300,720,620];
-    [msg,~,loc] = readBarcode(img,roi,"QR-CODE");
+
+    I_gs = convertRGBtoGS(img);
+    I_bw = convertGStoBW(I_gs, 0.1);
+
+    imwrite(I_bw , ['../MATLAB/',  'robot', '.jpg'],'jpg');
+
+    new_I = imread("robot.jpg");
+
+    [msg,~,loc] = readBarcode(new_I,"QR-CODE");
+    Imsg = insertShape(new_I, "FilledCircle", [loc, repmat(10, length(loc), 1)],"Color","red","Opacity",1);
+    imshow(Imsg) 
     
-    xyText =  loc(2,:);
-    Imsg = insertText(img,xyText,msg,"BoxOpacity",1,"FontSize",25);
+    %[msg,~,loc] = readBarcode(img, "QR-CODE");
+    %Imsg = insertShape(img, "FilledCircle", [loc, repmat(10, length(loc), 1)], "Color", "red", "Opacity", 1);
+      
+    %imshow(Imsg)
     
-    Imsg = insertShape(Imsg, "FilledCircle", [loc, ...
-     repmat(10, length(loc), 1)],"Color","red","Opacity",1);
-    
-    imshow(Imsg)
-    
-    
-    
-    
-    
-    %pub = rospublisher('/cmd_vel', 'geometry_msgs/Twist');
+    %setup ros publisher
+    %pub = rospublisher('/follower/cmd_vel', 'geometry_msgs/Twist');
     
     %msg = rosmessage(pub);
     %msg.Linear.X = 0;
@@ -36,3 +41,12 @@ while(1)
     %send(pub, msg);
     
 end
+
+
+
+    
+   % xyText =  loc(1,:);
+    %Imsg = insertText(img,xyText,msg,"BoxOpacity",1,"FontSize",25);
+    
+    %Imsg = insertShape(Imsg, "FilledCircle", [loc, ...
+    % repmat(10, length(loc), 1)],"Color","red","Opacity",1);
