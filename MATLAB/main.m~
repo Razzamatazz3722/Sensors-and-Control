@@ -58,7 +58,7 @@ while(1)
     %convert from ros image type to matlab image type
     depth_raw_image = readImage(msg2);
     
-    %pick first loc point. bottom left square. Point of interest
+    %pick first loc point. bottom left square
     p_x = loc(1,1)
     p_y = loc(1,2)
     
@@ -69,9 +69,9 @@ while(1)
     
     msg3 = receive(sub3,10);
      
-    [X,Y,Z] = transform_image_to_3D(p_x, p_y, msg3, depth_raw_image)
+    [X,Y,Z] = transform_image_to_3D(p_x,p_y,msg3
      
-    
+     
      
      
 
