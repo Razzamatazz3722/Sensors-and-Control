@@ -1,39 +1,46 @@
 % PID CONTROLLER
 function controller()
 
-% clearvars
-% rosshutdown
-% rosinit
+%% ASSUMED COORDINATES
+% x [HEAD AXIS]
+% ^
+% |
+% .--> y [SIDE AXIS]
 
 %% Initialise variables
 %From image processing
-X = 1;          %X coord of object in camera coord frame. [head]
-Y = 1;          %Y coord of object in camera coord frame. [turn]
-Z = 1;          %Z coord of object in camera coord frame. [height]
-depth_ri = 1;   %Depth raw image; depth from camera 
-P_x = 1;        %Selected point coord in the image frame. 
-P_y = 1;        %Selected point coord in the image frame. 
-u = 1;          %New reading of x value of selected point coord.
-v = 1;          %New reading of y value of selected point coord. 
+head_val = 1;          %X coord of object in camera coord frame. [head]
+side_val = 1;          %Y coord of object in camera coord frame. [turn]
+turn_val = 1;          %Z coord of object in camera coord frame. [height]
+
+x = 1;                 %Orientation x 
+y = 1;
+z = 1;
+w = 1;
 
 %PID variables
 kp = 1;                 %Proportional gain value.
 ki = 1;                 %Integral gain value.
 kd = 1;                 %Differential gain value. 
 
-des_depth = 1;      %Following distance. Ex. 1 meter or 1 unit. 
-des_angle = 0;      %Desired 0 angle difference.
+set_depth = 1;          %Following distance. Ex. 1 meter or 1 unit. 
+set_angle = 0;          %Desired 0 angle difference.
 
-linV_max = 0.26;    %linear velocity max speed.
+linV_max = 0.26;        %linear velocity max speed.
 linV_min = 0;
 
-angV_max = 1.82;    %Right turn max speed. 
-angV_min = -1.82;   %Left turn max speed. 
+angV_max = 1.82;        %Right turn max speed. 
+angV_min = -1.82;       %Left turn max speed. 
+
+                        %Initialise bank data
+errorDepthBank = [0;0;0;0];
+errorAngleBank = [0;0;0;0];
+
 
 %% FUNCTIONS
 function P = proportionalController(kp,errorBank)
-    round = size(errorBank);
-    P = kp*errorBank(round(1));
+    increment_err = size(errorBank);
+    P = kp*errorBank(increment_err(1));
 end
 
 function I = integralController(ki,errorBank)
@@ -42,13 +49,13 @@ function I = integralController(ki,errorBank)
 end
 
 function D = differentialController(kd,errorBank)
-    round = size(errorBank);
-    slope = errorBank(round(1)) - errorBank(round(1)-1);
+    increment_err = size(errorBank);
+    slope = errorBank(increment_err(1)) - errorBank(increment_err(1)-1);
     D = kd*slope;
 end
 
 function out = calculateOutput(P,I,D,maxOut,minOut,direction)
-    out = P+I+D * direction;
+    out = P+I+D * direction;            %-1-> Turn right; 1-> Turn Left
     if out > maxOut
         out = maxOut;
     end
@@ -58,37 +65,42 @@ function out = calculateOutput(P,I,D,maxOut,minOut,direction)
     end 
 end
 
-function [err_aWorld,err_aImage,direction] = calculateErrorAngle(X,Y,P_x,P_y,u,v)
-    err_aWorld = atan2d(X,Y);
-    err_aImage = atan2d((u-P_x),(v-P_y)); %Assuming x coord is not facing forward.
-    if u - P_x > 0
-        direction = 1;                    %Object is on the right.
-    else
-        direction = -1;                   %Object is on the left. 
-    end
-    
+function [err_a,direction] = calculateErrorAngle(side_val,head_val)
+    err_a = atan2d(side_val,head_val);
+    if side_val > 0         %Object on Right     
+        direction = -1;    
+    else                    %Object on Left
+        direction =  1;   
+    end    
 end
 
-function err_d = calculateErrorDepth(X,Y,setDepth)
-    coord = [0 0;X,Y];
+%     function [err_a,direction] = calErrAngle_ar(z_val)
+%         err_a = z_val;        
+%         if err_a > 0        %Object on Right
+%             direction = -1;
+%         else                %Object on Left
+%             direction = 1;
+%         end
+%     end
+
+
+
+function err_d = calculateErrorDepth(side_val,head_val,setDepth)
+    coord = [0 0;side_val,head_val];
     eucDistance = pdist(coord,'euclidean');
-    err_d = setDepth - eucDistance;
+    err_d = eucDistance - setDepth;
 end
 
 
-while(1)
-%Initialise bank data
-errorDepthBank = [0;0;0;0];
-errorAngleBank = [0;0;0;0];
-   
+while(1)   
 %Calculate Error for depth and angle.    
-err_d = calculateErrorDepth(X,Y,des_depth);
-[err_aWorld,err_aImage,direction] = calculateErrorAngle(X,Y,P_x,P_y,u,v);
+err_d = calculateErrorDepth(side_val,head_val,set_depth);
+[err_a,direction] = calculateErrorAngle(side_val,head_val);
 
 %Storing error values in a container. 
 flagA = 5;
 errorDepthBank(flagA,:) = err_d;
-errorAngleBank(flagA,:) = err_aImage;
+errorAngleBank(flagA,:) = err_a;
 flagA = flagA + 1;
     
 %Calculate PID Controller values
@@ -111,8 +123,7 @@ cmd_msg.Linear.X = out_d;
 cmd_msg.Angular.Z = out_a;
  
 pubVel = rospublisher('/tb3_0/cmd_vel', 'geometry_msgs/Twist');
-send(pubVel,cmd_msg);
-    
+send(pubVel,cmd_msg);    
 end
 end
 
