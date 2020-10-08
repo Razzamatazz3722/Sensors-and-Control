@@ -98,50 +98,50 @@ while(1)
     
     
     %get rgb camera information
-    sub3 = rossubscriber('/tb3_0/camera/rgb/camera_info');
-    pause(1);
-    
-    msg3 = receive(sub3,10);
-     
-    [X,Y,Z] = transform_image_to_3D(P_x, P_y, msg3, depth_ri);
-     
-    
-    %Initialise bank data
-    errorDepthBank = [0;0;0;0];
-    errorAngleBank = [0;0;0;0];
-
-    %Calculate Error for depth and angle.    
-    err_d = calculateErrorDepth(X,Y,des_depth);
-    [err_aWorld,err_aImage,direction] = calculateErrorAngle(X,Y,u,v,P_x,P_y);
-
-    %Storing error values in a container. 
-    flagA = 5;
-    errorDepthBank(flagA,:) = err_d;
-    errorAngleBank(flagA,:) = err_aImage;
-    flagA = flagA + 1;
-
-    %Calculate PID Controller values
-    Pd = proportionalController(kp,errorDepthBank);
-    Pa = proportionalController(kp,errorAngleBank);
-
-    Id = integralController(ki,errorDepthBank);
-    Ia = integralController(ki,errorAngleBank);
-
-    Dd = differentialController(kd,errorDepthBank);
-    Da = differentialController(kd,errorAngleBank);
-    
-    disp("linear velocity")
-    out_d = calculateOutput(Pd,Id,Dd,linV_max,linV_min,1)
-    disp("angular velocity")
-    out_a = calculateOutput(Pa,Ia,Da,angV_max,angV_min,direction)
-
-    %Publish to cmd/vel
-    cmd_msg = rosmessage('geometry_msgs/Twist');
-    %cmd_msg.Linear.X = out_d;
-    cmd_msg.Angular.Z = out_a;
-
-    pubVel = rospublisher('/tb3_0/cmd_vel', 'geometry_msgs/Twist');
-    send(pubVel,cmd_msg);
+%     sub3 = rossubscriber('/tb3_0/camera/rgb/camera_info');
+%     pause(1);
+%     
+%     msg3 = receive(sub3,10);
+%      
+%     [X,Y,Z] = transform_image_to_3D(P_x, P_y, msg3, depth_ri);
+%      
+%     
+%     %Initialise bank data
+%     errorDepthBank = [0;0;0;0];
+%     errorAngleBank = [0;0;0;0];
+% 
+%     %Calculate Error for depth and angle.    
+%     err_d = calculateErrorDepth(X,Y,des_depth);
+%     [err_aWorld,err_aImage,direction] = calculateErrorAngle(X,Y,u,v,P_x,P_y);
+% 
+%     %Storing error values in a container. 
+%     flagA = 5;
+%     errorDepthBank(flagA,:) = err_d;
+%     errorAngleBank(flagA,:) = err_aImage;
+%     flagA = flagA + 1;
+% 
+%     %Calculate PID Controller values
+%     Pd = proportionalController(kp,errorDepthBank);
+%     Pa = proportionalController(kp,errorAngleBank);
+% 
+%     Id = integralController(ki,errorDepthBank);
+%     Ia = integralController(ki,errorAngleBank);
+% 
+%     Dd = differentialController(kd,errorDepthBank);
+%     Da = differentialController(kd,errorAngleBank);
+%     
+%     disp("linear velocity")
+%     out_d = calculateOutput(Pd,Id,Dd,linV_max,linV_min,1)
+%     disp("angular velocity")
+%     out_a = calculateOutput(Pa,Ia,Da,angV_max,angV_min,direction)
+% 
+%     %Publish to cmd/vel
+%     cmd_msg = rosmessage('geometry_msgs/Twist');
+%     %cmd_msg.Linear.X = out_d;
+%     cmd_msg.Angular.Z = out_a;
+% 
+%     pubVel = rospublisher('/tb3_0/cmd_vel', 'geometry_msgs/Twist');
+%     send(pubVel,cmd_msg);
      
 
 %     %TEST ROTATING TO A POINT
