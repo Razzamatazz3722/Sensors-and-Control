@@ -1,11 +1,42 @@
 % PID CONTROLLER
 function controller()
 
-clearvars
-rosshutdown
-rosinit
 
-follower_message_prefix = "/tb3_0/"
+%% NOTES:
+% Testing with Ar_track alvar: 
+% -> Assign subscribe values to head/side/turn_val. With X is head, y is side, z is height. 
+%This is from the base_link coordinate frame. 
+
+% -> Tune the PID K values. I have found slowing the angle turn works the
+% best. Therefore, have those values (kp_a etc ...) really small. If the
+% runs in circles then that means angle values are too high. Set them
+% lower.
+
+%-> Build up the controller with just the proportianal then continue adding
+% derivative and integral controller. I suggest PD then PID. IF working
+% with just the proportial controller remember that 'out' function needs I and D
+% values aswell thereby you need to set those values to zero. 
+
+% -> When tunning, the higher the number the faster the faster the output
+% will be come. Especially in the proportianal. For others, make them
+% larger if you want more of that controller to have a larger influence
+% with the output. 
+
+%-> Proportional [Present] -> To approach the target value. 
+%-> Integral [Past] -> To accelerate the approach value. This can be
+%replaced with a higher proportial k value. 
+%-> Derivative [Future] -> Acts as a brake. The bigger the slope the 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 
+% clearvars
+% rosshutdown
+% rosinit
+% 
+% follower_message_prefix = "/tb3_0/"
 
 
 %% ASSUMED COORDINATES
@@ -26,30 +57,33 @@ y = 1;
 z = 1;
 w = 1;
 
+%% TUNING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %PID variables
 kp_d = 0.5;                 %Proportional gain value.
-ki_d = 0.05;                 %Integral gain value.
+ki_d = 0.05;                %Integral gain value.
 kd_d = 0.1;                 %Differential gain value. 
 
 kp_a = 0.005;                 %Proportional gain value.
-ki_a = 0.0003;                 %Integral gain value.
+ki_a = 0.0003;                %Integral gain value.
 kd_a = 0.002;                 %Differential gain value. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-set_depth = 1;          %Following distance. Ex. 1 meter or 1 unit. 
-set_angle = 0;          %Desired 0 angle difference.
+%% SET VALUES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+set_depth = 0.75;           %Following distance. Ex. 1 meter or 1 unit. I have set it to 0.75 as greater than 1 we may have issues detecting AR Tag. 
+set_angle = 0;              %Desired 0 angle difference.
 
-linV_max = 0.26;        %linear velocity max speed.
+linV_max = 0.26;            %linear velocity max speed.
 linV_min = 0;
 
-angV_max = 1.82;        %Right turn max speed. 
-angV_min = -1.82;       %Left turn max speed. 
+angV_max = 1.82;            %Right turn max speed. 
+angV_min = -1.82;           %Left turn max speed. 
 
-                        %Initialise bank data
+                            %Initialise bank data
 errorDepthBank = [0;0;0;0];
 errorAngleBank = [0;0;0;0];
 
 flagA = 5;
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% FUNCTIONS
 function P = proportionalController(kp,errorBank)
     increment_err = size(errorBank);
@@ -110,7 +144,7 @@ function err_d = calculateErrorDepth(side_val,head_val,setDepth)
     end
 end
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 while(1)   
@@ -119,7 +153,6 @@ err_d = calculateErrorDepth(side_val,head_val,set_depth);
 [err_a,direction] = calculateErrorAngle(side_val,head_val);
 
 %Storing error values in a container. 
-flagA = 5;
 errorDepthBank(flagA,:) = err_d;
 errorAngleBank(flagA,:) = err_a;
 flagA = flagA + 1;
@@ -128,7 +161,7 @@ flagA = flagA + 1;
 Pd = proportionalController(kp_d,errorDepthBank);
 Pa = proportionalController(kp_a,errorAngleBank);
 
-Id = integralController(ki_a,errorDepthBank);
+Id = integralController(ki_d,errorDepthBank);
 Ia = integralController(ki_a,errorAngleBank);
 
 Dd = differentialController(kd_d,errorDepthBank);
