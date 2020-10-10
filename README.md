@@ -35,13 +35,14 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
    'ctrl+f' and search for "cherise" change all 5 iterations to the name of your user/home directory name and save 
 
 4. in a terminal: 
-roslaunch turtlebot3_gazebo turtlebot3_multi_ar.launch
 
-roslaunch ar_track_alvar pr2_indiv.launch
+   roslaunch turtlebot3_gazebo turtlebot3_multi_ar.launch
 
-roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch 
+   roslaunch ar_track_alvar pr2_indiv.launch
 
-matlab (open matlab).
+   roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch 
+
+   matlab (open matlab).
                   
 5.  ensure folder Sensors-and-Control is added to the path and open main2.m
 
