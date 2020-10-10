@@ -34,7 +34,7 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 3. In the models folder --> turtlebot3_arleader, open model.sdf in a text editor then
    'ctrl+f' and search for "cherise" change all 5 iterations to the name of your user/home directory name and save 
 
-4. in a terminal: 
+4. In a terminal: 
 
    roslaunch turtlebot3_gazebo turtlebot3_multi_ar.launch
 
@@ -44,12 +44,15 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 
    matlab (open matlab).
                   
-5.  ensure folder Sensors-and-Control is added to the path and open main2.m
+5. Ensure folder Sensors-and-Control is added to the path and open main2.m
 
-6. in the matlab command line: folderpath = "/home/YOURNAME/catkin_ws/src/ar_track_alvar/"
+6. In the matlab command line: folderpath = "/home/YOURNAME/catkin_ws/src/ar_track_alvar/"
                                rosgenmsg(folderpath)
                                follow instructions prompted in command line 
                                if permissions error occurs, type sudo chmod 777 pathdef.m  into your terminal and enter your password when prompted 
 7. Run the Matlab code
-8. teleop the leader around VERY SLOWLY please
-9. if you encounter errors please google it, don't ask us thanks (maleen is real mvp wo knows all)  :)
+8. Teleop the leader around VERY SLOWLY please
+9. If you encounter errors please google it, don't ask us thanks (maleen is real mvp wo knows all)  :)
+
+
+
