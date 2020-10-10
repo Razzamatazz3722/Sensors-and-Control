@@ -10,6 +10,7 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 
 
 1. git clone git@github.com:ros-perception/ar_track_alvar.git
+
    git clone git@github.com:Razzamatazz3722/Sensors-and-Control.git
    catkin_make
    source devel/setup.bash
