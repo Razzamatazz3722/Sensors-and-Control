@@ -12,16 +12,22 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 1. git clone git@github.com:ros-perception/ar_track_alvar.git
 
    git clone git@github.com:Razzamatazz3722/Sensors-and-Control.git
+   
    catkin_make
+   
    source devel/setup.bash
    
 2. open 'Sensors-and-Control' folder --> ar_tag_files (we will need to move some files) 
+
    2.1)
    Look for the file "turtlebot3_teleop_key.launch" and move to turtlebot3 (the ROS package in catkin_ws) --> turtlebot3_teleop --> launch (replace file inside      folder).
+   
    2.2)
    Look for the file "pr2_indiv.launch" will move to ar_track_alvar (the ROS package in catkin_ws) --> ar_track_alvar --> launch (and replace the file with the      same name in this folder).
+   
    2.3)
    Look for the files "spawn_sdf.launch" and "turtlebot3_multi_ar.launch" will move to turtlebot_simulations (the ROS package in catkin_ws) --> turtlebot3_gazebo    --> launch
+   
    2.4)
    Look for the folder "turtlebot3_arleader" should be moved to turtlebot_simulations (the ROS package in catkin_ws) --> turtlebot3_gazebo --> models
    
