@@ -17,11 +17,6 @@ head_val = 1;                   % X coord of object in camera coord frame. [head
 side_val = 0;                   % Y coord of object in camera coord frame. [turn]
 turn_val = 0;                   % Z coord of object in camera coord frame. [height]
 
-x = 1;                          % Orientation x 
-y = 1;
-z = 1;
-w = 1;
-
 %PID variables
 % Distance Gain Values
 kp_d = 0.5;                     % Proportional gain value.
