@@ -54,5 +54,8 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 8. Teleop the leader around VERY SLOWLY please
 9. If you encounter errors please google it, don't ask us thanks (maleen is real mvp wo knows all)  :)
 
-
+PERCENTAGE CONTRIBUTIONS
+Rachael 33.33%
+Rebo 33.33%
+Cherise 33.33%
 
