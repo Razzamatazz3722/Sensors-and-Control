@@ -54,11 +54,10 @@ on Matlab have the ROS toolbox installed and ROS Toolbox interface for ROS Custo
 8. Teleop the leader around VERY SLOWLY please
 9. If you encounter errors please google it, don't ask us thanks (maleen is real mvp wo knows all)  :)
 
-PERCENTAGE CONTRIBUTIONS
-
+PERCENTAGE CONTRIBUTIONS:
 Rachael 33.33%
-
 Rebo 33.33%
-
 Cherise 33.33%
 
+VIDEO DESCRIPTION
+The video found at https://www.youtube.com/watch?v=cV-1P7N5kkY demonstrates the workings of our project. We have used 2 turtlebot3 waffle models, where one has an AR tag attached on the back. This allows for the second robot to detect the code using the ar_track_alvar package. We have then interfaced with the published topics with MATLAB to manipulate the information recived, and extrapolate a goal pose for the follower robot to maintain 0.65m behind the follower. A PID controller has been implemented for the control of the follower robot, and the leader robot is manually controlled through the teleop commands. 
